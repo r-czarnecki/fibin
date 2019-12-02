@@ -12,7 +12,8 @@ public:
 protected:
 	constexpr Fibin()
 	: value(0)
-	, invoke(nullptr) {
+	, invoke(nullptr)
+	, hasValue(false) {
 		invoke = [] (Fibin& ths, Fibin& arg) -> Fibin& {
 			(void)arg;
 			return ths;
@@ -20,11 +21,14 @@ protected:
 	}
 
 	constexpr ValueType getValue() const {
+		static_assert(hasValue, "Object does not have any value");
+
 		return value;
 	}
 
 	ValueType value;
 	Fibin& (*invoke)(Fibin&, Fibin&);
+	bool hasValue;
 };
 
 template<int N>
