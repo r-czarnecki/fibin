@@ -20,6 +20,20 @@ public:
     }
 };
 
+class True {
+public:
+    constexpr static bool generate() {
+        return true;
+    }
+};
+
+class False {
+public:
+    constexpr static bool generate() {
+        return false;
+    }
+};
+
 int main() {
     const unsigned temp = Fib<3>::generate();
     cout << temp << endl;
