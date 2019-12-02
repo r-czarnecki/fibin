@@ -16,7 +16,7 @@ Język Fibin wspiera:
   alfabetu angielskiego (a-zA-Z) oraz cyfry (0-9); małe i wielkie litery nie są
   rozróżniane.
   Przykłady poprawnych zmiennych: Var("A"), Var("01234"), Var("Cdefg").
-
+  
 * Operacje arytmetyczne Sum, Inc1, Inc10
   Sum<...> - operacja dodawania wielu liczb, wymagane są co najmniej dwa argumenty.
   Inc1<Arg> - specjalizacja dodawania, która zwiększa wartość Arg o Fib<1>.
