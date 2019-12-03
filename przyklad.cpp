@@ -4,18 +4,19 @@ using namespace std;
 
 class A {
 public:
-	static int r;
-	A() {}
+	static int* r;
+	constexpr A() {}
 };
 
-int A::r = 2;
+int n = 2;
+int* A::r = &n;
 
-constexpr void f() {
-	A::r = 4;
+constexpr void f(int* a) {
+	*(a) = 4;
 }
 
 int main() {
-	cout << A::r << endl;
-	f();
-	cout << A::r << endl;
+	cout << *(A::r) << endl;
+	f(A::r);
+	cout << *(A::r) << endl;
 }
