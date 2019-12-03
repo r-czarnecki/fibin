@@ -37,7 +37,7 @@ protected:
 
 //LICZENIE LICZB FIBONACIEGO
 
-template<int N>
+template<int N> //Może lepiej zamiast int użyć ValueType z  fibina? Wrzucić do środka i takie tam
 class Fib    {
 public:
 	static const int result = Fib<N-1>::result + Fib<N-2>::result;
