@@ -35,38 +35,31 @@ protected:
 	bool hasValue;
 };
 
+//LICZENIE LICZB FIBONACIEGO
+
 template<int N>
-class Fib {
+class Fib    {
 public:
-	typedef bool lit;
-	constexpr static unsigned long long generate() {
-		unsigned long long fs = 0, sn = 1, t = 0;
-		if (N < 2)
-			return N;
-		for (int i=1; i<N; i++) {
-			t = sn + fs;
-			fs = sn;
-			sn = t;
-		}
-		return t;
-	}
+	static const int result = Fib<N-1>::result + Fib<N-2>::result;
 };
 
-class True {
+template<>
+class Fib<1> {
 public:
-	typedef bool lit;
-	constexpr static bool generate() {
-		return true;
-	}
-};
+	static const int result = 1;
+}
 
-class False {
+template<>
+class Fib<0> {
 public:
-	typedef bool lit;
-	constexpr static bool generate() {
-		return false;
-	}
-};
+	static const int result = 0;
+}
+
+//WARTOŚCI LOGICZNE
+
+class True {};
+class False {};
+
 
 template <typename T, typename T::lit = 0>
 class Lit : public Fibin<unsigned long long> {
