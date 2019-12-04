@@ -135,26 +135,32 @@ struct Evaluate<Sum<FIRST, SECOND, ARGS...>, LST, ARG> {
 
 //Inc1
 
-template<typename ARG>
-struct Inc1 {
-	static const unsigned long long int value = Evaluate<Sum<ARG, Lit<Fib<1>>>, LNULL, ARGNULL>::result::value;
+template<typename INCARG, typename LST, typename ARG>
+struct Inc1Helper {
+	static const unsigned long long int value = Evaluate<Sum<INCARG, Lit<Fib<1>>>, LST, ARG>::result::value;
 };
+ 
+template<typename ARG>
+struct Inc1 {};
 
 template<typename LST, typename ARG, typename INCARG>
 struct Evaluate<Inc1<INCARG>, LST, ARG> {
-	typedef Inc1<INCARG> result;
+	typedef Inc1Helper<INCARG, LST, ARG> result;
 };
 
 //Inc10
 
-template<typename ARG>
-struct Inc10 {
-	static const unsigned long long int value = Evaluate<Sum<ARG, Lit<Fib<10>>>, LNULL, ARGNULL>::result::value;
+template<typename INCARG, typename LST, typename ARG>
+struct Inc10Helper {
+	static const unsigned long long int value = Evaluate<Sum<INCARG, Lit<Fib<10>>>, LST, ARG>::result::value;
 };
+
+template<typename ARG>
+struct Inc10 {};
 
 template<typename LST, typename ARG, typename INCARG>
 struct Evaluate<Inc10<INCARG>, LST, ARG> {
-	typedef Inc10<INCARG> result;
+	typedef Inc10Helper<INCARG, LST, ARG> result;
 };
 
 //IF
