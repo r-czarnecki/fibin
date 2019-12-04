@@ -6,7 +6,7 @@
 using namespace std;
 
 template<typename FIBIN, typename LST, typename ARG>
-class Invoke {};
+class Evaluate {};
 
 class ARGNULL {};
 
@@ -106,7 +106,7 @@ public:
 };
 
 template<typename T, typename LST, typename ARG>
-class Invoke<Lit<T>, LST, ARG> {
+class Evaluate<Lit<T>, LST, ARG> {
 public:
 	typedef Lit<T> result;
 };
@@ -138,7 +138,7 @@ class Fibin {
 public:
 	template<typename Expression>
 	constexpr static ValueType eval() {
-		return Invoke<Expression, LNULL, ARGNULL>::result::value; 
+		return Evaluate<Expression, LNULL, ARGNULL>::result::value; 
 	}
 };
 
