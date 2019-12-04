@@ -14,7 +14,6 @@ struct ARGNULL {};
 
 template<int N> //Może lepiej zamiast int użyć ValueType z  fibina? Wrzucić do środka i takie tam
 struct Fib    {
-public:
 	typedef bool lit;
 	static const int result = Fib<N-1>::result + Fib<N-2>::result;
 	static const bool isBoolean = false;
@@ -22,7 +21,6 @@ public:
 
 template<>
 struct Fib<1> {
-public:
 	typedef bool lit;
 	static const int result = 1;
 	static const bool isBoolean = false;
@@ -30,7 +28,6 @@ public:
 
 template<>
 struct Fib<0> {
-public:
 	typedef bool lit;
 	static const int result = 0;
 	static const bool isBoolean = false;
@@ -39,14 +36,12 @@ public:
 //WARTOŚCI LOGICZNE
 
 struct True {
-public:
 	typedef bool lit;
 	static const bool result = true;
 	static const bool isBoolean = true;
 };
 
 struct False {
-public:
 	typedef bool lit;
 	static const bool result = false;
 	static const bool isBoolean = true;
@@ -106,14 +101,12 @@ struct Find<V, LNULL, FOUND> {
 
 template <typename T, typename T::lit = 0>
 struct Lit {
-public:
 	static const unsigned long long value = T::result;
 	static const bool isBoolean = T::isBoolean;
 };
 
 template<typename LST, typename ARG, typename T>
 struct Evaluate<Lit<T>, LST, ARG> {
-public:
 	typedef Lit<T> result;
 };
 
@@ -125,21 +118,18 @@ struct Sum {
 
 template<typename LST, typename ARG, typename FIRST, typename... ARGS>
 struct Add {
-public:
 	static const unsigned long long int value = Add<LST, ARG, FIRST>::value + Add<LST, ARG, ARGS...>::value;
 	static const bool isBoolean = false;
 };
 
 template<typename LST, typename ARG, typename FIRST>
 struct Add<LST, ARG, FIRST> {
-public:
 	static_assert(!FIRST::isBoolean, "");
 	static const unsigned long long int value = Evaluate<FIRST, LST, ARG>::result::value;
 };
 
 template<typename LST, typename ARG, typename FIRST, typename SECOND, typename... ARGS>
 struct Evaluate<Sum<FIRST, SECOND, ARGS...>, LST, ARG> {
-public:
 	typedef Add<LST, ARG, FIRST, SECOND, ARGS...> result;
 };
 
@@ -147,13 +137,11 @@ public:
 
 template<typename ARG>
 struct Inc1 {
-public:
 	static const unsigned long long int value = Evaluate<Sum<ARG, Lit<Fib<1>>>, LNULL, ARGNULL>::result::value;
 };
 
 template<typename LST, typename ARG, typename INCARG>
 struct Evaluate<Inc1<INCARG>, LST, ARG> {
-public:
 	typedef Inc1<INCARG> result;
 };
 
@@ -161,13 +149,11 @@ public:
 
 template<typename ARG>
 struct Inc10 {
-public:
 	static const unsigned long long int value = Evaluate<Sum<ARG, Lit<Fib<10>>>, LNULL, ARGNULL>::result::value;
 };
 
 template<typename LST, typename ARG, typename INCARG>
 struct Evaluate<Inc10<INCARG>, LST, ARG> {
-public:
 	typedef Inc10<INCARG> result;
 };
 
@@ -195,7 +181,6 @@ constexpr unsigned long long Var(const char* str) {
 
 template <typename ValueType>
 struct Fibin {
-public:
 	template<typename Expression>
 	constexpr static ValueType eval() {
 		return Evaluate<Expression, LNULL, ARGNULL>::result::value; 
