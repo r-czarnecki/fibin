@@ -3,6 +3,7 @@
 
 #include <type_traits>
 #include <cassert>
+#include <iostream>
 using namespace std;
 
 template<typename FIBIN, typename LST, typename ARG>
@@ -52,7 +53,7 @@ struct False {
 struct LNULL {
 	typedef LNULL Head;
 	typedef LNULL Tail;
-	static const unsigned long long Var;
+	static const unsigned long long Var = 0;
 };
 
 template<typename H, unsigned long long V, typename T = LNULL>
@@ -66,16 +67,6 @@ template<typename H, unsigned long long V, typename LST>
 struct PushFront {
 	typedef List<H, V, LST> result;
 };
-
-// template <typename A, typename B>
-// struct Equals {
-// 	static const bool result = false;
-// };
-
-// template<typename A>
-// struct Equals<A, A> {
-// 	static const bool result = true;
-// };
 
 template<unsigned long long V, typename LST, bool FOUND = false, bool INIT = true>
 struct Find {
@@ -124,8 +115,9 @@ struct Add {
 
 template<typename LST, typename ARG, typename FIRST>
 struct Add<LST, ARG, FIRST> {
-	static_assert(!FIRST::isBoolean, "");
-	static const unsigned long long int value = Evaluate<FIRST, LST, ARG>::result::value;
+	typedef typename Evaluate<FIRST, LST, ARG>::result EVAL;
+	static_assert(!EVAL::isBoolean, "");
+	static const unsigned long long int value = EVAL::value;
 };
 
 template<typename LST, typename ARG, typename FIRST, typename SECOND, typename... ARGS>
@@ -208,6 +200,22 @@ struct Evaluate<Ref<VAR>, LST, ARG> {
 	static_assert(!is_same<result, LNULL>::value, "");
 };
 
+//LET
+template<unsigned long long VAR, typename VALUE, typename EXPRESSION, typename LST, typename ARG>
+struct LetHelper {
+	typedef typename Evaluate<VALUE, LST, ARGNULL>::result VAL;
+	typedef typename PushFront<VAL, VAR, LST>::result NEWLST;
+	typedef typename Evaluate<EXPRESSION, NEWLST, ARG>::result result;
+};
+
+template<unsigned long long VAR, typename VALUE, typename EXPRESSION>
+struct Let {};
+
+template<typename LST, typename ARG, unsigned long long VAR, typename VALUE, typename EXPRESSION>
+struct Evaluate<Let<VAR, VALUE, EXPRESSION>, LST, ARG> {
+	typedef typename LetHelper<VAR, VALUE, EXPRESSION, LST, ARG>::result result;
+};
+
 //IF - Zakomentowane, bo się nie kompiluje
 
 // template<typename _TRUE, typename _FALSE>
@@ -246,14 +254,21 @@ struct Evaluate<Ref<VAR>, LST, ARG> {
 
 constexpr unsigned long long Var(const char* str) {
 	unsigned long long result = 1;
+	char c = 0;
 	for(int i = 0; str[i] != '\0'; i++) { 
-		char c = str[i];
+		c = str[i];
 		if(str[i] >= 'A' && str[i] <= 'Z')
 			c += 32;
+		// cout << c << endl;
 		
 		assert(((void)"Illegal character in Var(const char*)",
-			   (str[i] >= 'a' && str[i] <= 'z') || (str[i] >= '0' && str[i] <= '9')));
+			   (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')));
 		assert(((void)"Argument in Var(const char*) is too long", i < 6));
+
+		if(c >= '0' && c <= '9')
+			c -= '0';
+		else
+			c = 11 + c - 'a';
 
 		result *= 100;
 		result += c;
