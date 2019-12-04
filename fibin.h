@@ -219,38 +219,28 @@ struct Evaluate<Let<VAR, VALUE, EXPRESSION>, LST, ARG> {
 	typedef typename Evaluate<EXPRESSION, NEWLST, ARG>::result result;
 };
 
-//IF - Zakomentowane, bo się nie kompiluje
+//IF
 
-// template<typename _TRUE, typename _FALSE>
-// struct IfHelper<true>
-// {
-// 	typedef _TRUE::result result;
-// };
+template<bool CONDITION, typename THEN, typename ELSE, typename LST, typename ARG>
+struct IfHelper {
+	typedef typename Evaluate<THEN, LST, ARG>::result result;
+};
 
-// template<typename _TRUE, typename _FALSE>
-// struct IfHelper<false>
-// {
-// 	typedef _FALSE::result result;
-// };
+template<typename THEN, typename ELSE, typename LST, typename ARG>
+struct IfHelper<false, THEN, ELSE, LST, ARG> {
+	typedef typename Evaluate<ELSE, LST, ARG>::result result;
+};
 
-// // ROZWIĄZENIE ALTERNATYWNE – WYMAGA PRZEPISANIA POZOSTAŁEJ CZĘŚCI
+template<typename CONDITION, typename THEN, typename ELSE>
+struct If {};
 
-// // template<typename _TRUE, typename _FALSE>
-// // struct IfHelper<Lit<True>>
-// // {
-// // 	typedef _TRUE::result result;
-// // };
-
-// // template<typename _TRUE, typename _FALSE>
-// // struct IfHelper<Lit<False>>
-// // {
-// // 	typedef _FALSE::result result;
-// // };
-
-// template<typename _BOOL, typename _TRUE, typename _FALSE>
-// struct If { //TRZEBA OGARNĄĆ PRZYPADEK GDY BOOL JEST NIE BOOLEM
-//   typedef IfHelper<_BOOL::result><_TRUE, _FALSE>::result result; 
-// };
+template<typename LST, typename ARG, typename CONDITION, typename THEN, typename ELSE>
+struct Evaluate<If<CONDITION, THEN, ELSE>, LST, ARG> {
+	typedef typename Evaluate<CONDITION, LST, ARG>::result COND;
+	static const bool cond = COND::value;
+	static_assert(COND::isBoolean, "");
+	typedef typename IfHelper<cond, THEN, ELSE, LST, ARG>::result result;
+};
 
 //LAMBDA
 
@@ -310,9 +300,14 @@ constexpr unsigned long long Var(const char* str) {
 
 template <typename ValueType>
 struct Fibin {
-	template<typename Expression>
+	template<typename Expression, typename T = ValueType, typename enable_if<is_integral<T>::value, int>::type = 0>
 	constexpr static ValueType eval() {
 		return Evaluate<Expression, LNULL, ARGNULL>::result::value; 
+	}
+
+	template<typename Expression, typename T = ValueType, typename enable_if<!is_integral<T>::value, int>::type = 0>
+	constexpr static void eval() {
+		cout << "Fibin doesn't support that type\n";
 	}
 };
 
