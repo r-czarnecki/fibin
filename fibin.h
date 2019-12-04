@@ -17,6 +17,7 @@ class Fib    {
 public:
 	typedef bool lit;
 	static const int result = Fib<N-1>::result + Fib<N-2>::result;
+	static const bool isBoolean = false;
 };
 
 template<>
@@ -24,6 +25,7 @@ class Fib<1> {
 public:
 	typedef bool lit;
 	static const int result = 1;
+	static const bool isBoolean = false;
 };
 
 template<>
@@ -31,6 +33,7 @@ class Fib<0> {
 public:
 	typedef bool lit;
 	static const int result = 0;
+	static const bool isBoolean = false;
 };
 
 //WARTOŚCI LOGICZNE
@@ -39,12 +42,14 @@ class True {
 public:
 	typedef bool lit;
 	static const bool result = true;
+	static const bool isBoolean = true;
 };
 
 class False {
 public:
 	typedef bool lit;
 	static const bool result = false;
+	static const bool isBoolean = true;
 };
 
 //LISTA - JESZCZE NIE TESTOWANA
@@ -63,7 +68,7 @@ class List {
 };
 
 template<typename H, typename V, typename LST>
-class Add {
+class PushFront {
 	typedef List<H, V, LST> result;
 };
 
@@ -103,12 +108,39 @@ template <typename T, typename T::lit = 0>
 class Lit {
 public:
 	static const unsigned long long value = T::result;
+	static const bool isBoolean = T::isBoolean;
 };
 
-template<typename T, typename LST, typename ARG>
+template<typename LST, typename ARG, typename T>
 class Evaluate<Lit<T>, LST, ARG> {
 public:
 	typedef Lit<T> result;
+};
+
+//SUM
+
+template<typename FIRST, typename SECOND, typename... ARGS>
+class Sum {
+};
+
+template<typename LST, typename ARG, typename FIRST, typename... ARGS>
+class Add {
+public:
+	static const unsigned long long int value = Add<LST, ARG, FIRST>::value + Add<LST, ARG, ARGS...>::value;
+	static const bool isBoolean = false;
+};
+
+template<typename LST, typename ARG, typename FIRST>
+class Add<LST, ARG, FIRST> {
+public:
+	static_assert(!FIRST::isBoolean, "");
+	static const unsigned long long int value = Evaluate<FIRST, LST, ARG>::result::value;
+};
+
+template<typename LST, typename ARG, typename FIRST, typename SECOND, typename... ARGS>
+class Evaluate<Sum<FIRST, SECOND, ARGS...>, LST, ARG> {
+public:
+	typedef Add<LST, ARG, FIRST, SECOND, ARGS...> result;
 };
 
 //VAR

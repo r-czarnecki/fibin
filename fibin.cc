@@ -9,4 +9,5 @@ int main() {
 
     static_assert(Fibin<int>::eval<Lit<Fib<4>>>() == 3, "");
     static_assert(Fibin<bool>::eval<Lit<True>>() == true, "");
+    static_assert(Fibin<int>::eval<Sum<Lit<Fib<1>>, Lit<Fib<5>>>>() == 6, "");
 }
