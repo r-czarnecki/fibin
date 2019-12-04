@@ -7,7 +7,9 @@
 using namespace std;
 
 template<typename FIBIN, typename LST, typename ARG>
-struct Evaluate {};
+struct Evaluate {
+	typedef bool eee;
+};
 
 struct ARGNULL {};
 
@@ -125,6 +127,11 @@ struct Evaluate<Sum<FIRST, SECOND, ARGS...>, LST, ARG> {
 	typedef Add<LST, ARG, FIRST, SECOND, ARGS...> result;
 };
 
+template<typename LST, typename ARG, typename FIRST, typename... ARGS, typename LST2, typename ARG2>
+struct Evaluate<Add<LST, ARG, FIRST, ARGS...>, LST2, ARG2> {
+	typedef Add<LST, ARG, FIRST, ARGS...> result;
+};
+
 //Inc1
 
 template<typename INCARG, typename LST, typename ARG>
@@ -138,6 +145,11 @@ struct Inc1 {};
 
 template<typename LST, typename ARG, typename INCARG>
 struct Evaluate<Inc1<INCARG>, LST, ARG> {
+	typedef Inc1Helper<INCARG, LST, ARG> result;
+};
+
+template<typename LST, typename ARG, typename INCARG>
+struct Evaluate<Inc1Helper<INCARG, LST, ARG>, LST, ARG> {
 	typedef Inc1Helper<INCARG, LST, ARG> result;
 };
 
@@ -157,6 +169,11 @@ struct Evaluate<Inc10<INCARG>, LST, ARG> {
 	typedef Inc10Helper<INCARG, LST, ARG> result;
 };
 
+template<typename LST, typename ARG, typename INCARG>
+struct Evaluate<Inc10Helper<INCARG, LST, ARG>, LST, ARG> {
+	typedef Inc10Helper<INCARG, LST, ARG> result;
+};
+
 //EQ
 
 template<unsigned long long LVAL, unsigned long long RVAL, bool LTYPE, bool RTYPE>
@@ -169,51 +186,37 @@ struct EqResult<VAL, VAL, TYPE, TYPE> {
 	typedef Lit<True> result;
 };
 
-template<typename LEFT, typename RIGHT, typename LST, typename ARG>
-struct EqHelper {
-	typedef typename Evaluate<LEFT, LST, ARG>::result ELEFT;
-	typedef typename Evaluate<RIGHT, LST, ARG>::result ERIGHT;
-	typedef typename EqResult<ELEFT::value, ERIGHT::value, ELEFT::isBoolean, ERIGHT::isBoolean>::result result;
-};
-
 template<typename LEFT, typename RIGHT>
 struct Eq {};
 
 template<typename LST, typename ARG, typename LEFT, typename RIGHT>
 struct Evaluate<Eq<LEFT, RIGHT>, LST, ARG> {
-	typedef typename EqHelper<LEFT, RIGHT, LST, ARG>::result result;
+	typedef typename Evaluate<LEFT, LST, ARG>::result ELEFT;
+	typedef typename Evaluate<RIGHT, LST, ARG>::result ERIGHT;
+	typedef typename EqResult<ELEFT::value, ERIGHT::value, ELEFT::isBoolean, ERIGHT::isBoolean>::result result;
 };
 
 //REF
-
-template<unsigned long long VAR, typename LST>
-struct RefHelper {
-	typedef typename Find<VAR, LST>::result result;
-};
 
 template<unsigned long long VAR>
 struct Ref {};
 
 template<typename LST, typename ARG, unsigned long long VAR>
 struct Evaluate<Ref<VAR>, LST, ARG> {
-	typedef typename RefHelper<VAR, LST>::result result;
+	typedef typename Find<VAR, LST>::result result;
 	static_assert(!is_same<result, LNULL>::value, "");
 };
 
 //LET
-template<unsigned long long VAR, typename VALUE, typename EXPRESSION, typename LST, typename ARG>
-struct LetHelper {
-	typedef typename Evaluate<VALUE, LST, ARGNULL>::result VAL;
-	typedef typename PushFront<VAL, VAR, LST>::result NEWLST;
-	typedef typename Evaluate<EXPRESSION, NEWLST, ARG>::result result;
-};
 
 template<unsigned long long VAR, typename VALUE, typename EXPRESSION>
 struct Let {};
 
 template<typename LST, typename ARG, unsigned long long VAR, typename VALUE, typename EXPRESSION>
 struct Evaluate<Let<VAR, VALUE, EXPRESSION>, LST, ARG> {
-	typedef typename LetHelper<VAR, VALUE, EXPRESSION, LST, ARG>::result result;
+	typedef typename Evaluate<VALUE, LST, ARGNULL>::result VAL;
+	typedef typename PushFront<VAL, VAR, LST>::result NEWLST;
+	typedef typename Evaluate<EXPRESSION, NEWLST, ARG>::result result;
 };
 
 //IF - Zakomentowane, bo się nie kompiluje
@@ -249,6 +252,32 @@ struct Evaluate<Let<VAR, VALUE, EXPRESSION>, LST, ARG> {
 //   typedef IfHelper<_BOOL::result><_TRUE, _FALSE>::result result; 
 // };
 
+//LAMBDA
+
+template<unsigned long long VAR, typename BODY>
+struct Lambda {};
+
+template<typename LST, unsigned long long VAR, typename BODY>
+struct Evaluate<Lambda<VAR, BODY>, LST, ARGNULL> {
+	typedef Lambda<VAR, BODY> result;
+};
+
+template<typename LST, typename ARG, unsigned long long VAR, typename BODY>
+struct Evaluate<Lambda<VAR, BODY>, LST, ARG> {
+	typedef typename PushFront<ARG, VAR, LST>::result NEWLST;
+	typedef typename Evaluate<BODY, NEWLST, ARGNULL>::result result;
+};
+
+//INVOKE
+
+template<typename FUN, typename PARAM>
+struct Invoke {};
+
+template<typename LST, typename ARG, typename FUN, typename PARAM>
+struct Evaluate<Invoke<FUN, PARAM>, LST, ARG> {
+	typedef typename Evaluate<FUN, LST, PARAM>::result EVAL;
+	typedef typename Evaluate<EVAL, LST, ARG>::result result;
+};
 
 //VAR
 

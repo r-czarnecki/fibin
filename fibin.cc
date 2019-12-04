@@ -16,6 +16,8 @@ int main() {
     static_assert(Fibin<bool>::eval<Eq<Eq<Lit<Fib<10>>, Lit<Fib<1>>>, Lit<False>>>(), "");
     static_assert(Fibin<bool>::eval<Let<Var("x"), Lit<Fib<10>>, Eq<Ref<Var("x")>, Lit<Fib<10>>>>>() == true, "");
 
-    // Test z przykładu
+    // Testy z przykładu
     static_assert(1 == Fibin<int16_t>::eval<Let<Var("z"), Lit<Fib<0>>, Inc1<Ref<Var("Z")>>>>(), "");
+    static_assert(59 == Fibin<uint64_t>::eval<Invoke<Lambda<Var("x"),
+                  Sum<Ref<Var("x")>, Inc10<Lit<Fib<1>>>, Lit<Fib<2>>>>, Lit<Fib<3>>>>());
 }
