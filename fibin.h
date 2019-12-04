@@ -68,23 +68,23 @@ struct PushFront {
 };
 
 template <typename A, typename B>
-struct Eq {
+struct Equals {
 	static const bool result = false;
 };
 
 template<typename A>
-struct Eq<A, A> {
+struct Equals<A, A> {
 	static const bool result = true;
 };
 
 template<typename V, typename LST, bool FOUND = false>
 struct Find {
-	typedef Find<V, LST, Eq<V, typename LST::Var>::result> result;
+	typedef Find<V, LST, Equals<V, typename LST::Var>::result> result;
 };
 
 template<typename V, typename LST>
 struct Find<V, LST, false> {
-	typedef Find<V, typename LST::Tail, Eq<V, typename LST::Tail::Var>::result> result;
+	typedef Find<V, typename LST::Tail, Equals<V, typename LST::Tail::Var>::result> result;
 };
 
 template<typename V, typename LST>
@@ -138,6 +138,7 @@ struct Evaluate<Sum<FIRST, SECOND, ARGS...>, LST, ARG> {
 template<typename INCARG, typename LST, typename ARG>
 struct Inc1Helper {
 	static const unsigned long long int value = Evaluate<Sum<INCARG, Lit<Fib<1>>>, LST, ARG>::result::value;
+	static const bool isBoolean = false;
 };
  
 template<typename ARG>
@@ -153,6 +154,7 @@ struct Evaluate<Inc1<INCARG>, LST, ARG> {
 template<typename INCARG, typename LST, typename ARG>
 struct Inc10Helper {
 	static const unsigned long long int value = Evaluate<Sum<INCARG, Lit<Fib<10>>>, LST, ARG>::result::value;
+	static const bool isBoolean = false;
 };
 
 template<typename ARG>
@@ -163,38 +165,66 @@ struct Evaluate<Inc10<INCARG>, LST, ARG> {
 	typedef Inc10Helper<INCARG, LST, ARG> result;
 };
 
-//IF
+//EQ
 
-template<typename _TRUE, typename _FALSE>
-struct IfHelper<true>
-{
-	typedef _TRUE::result result;
+template<unsigned long long LVAL, unsigned long long RVAL, bool LTYPE, bool RTYPE>
+struct EqResult {
+	typedef Lit<False> result;
 };
 
-template<typename _TRUE, typename _FALSE>
-struct IfHelper<false>
-{
-	typedef _FALSE::result result;
+template<unsigned long long VAL, bool TYPE>
+struct EqResult<VAL, VAL, TYPE, TYPE> {
+	typedef Lit<True> result;
 };
 
-// ROZWIĄZENIE ALTERNATYWNE – WYMAGA PRZEPISANIA POZOSTAŁEJ CZĘŚCI
+template<typename LEFT, typename RIGHT, typename LST, typename ARG>
+struct EqHelper {
+	typedef typename Evaluate<LEFT, LST, ARG>::result ELEFT;
+	typedef typename Evaluate<RIGHT, LST, ARG>::result ERIGHT;
+	typedef typename EqResult<ELEFT::value, ERIGHT::value, ELEFT::isBoolean, ERIGHT::isBoolean>::result result;
+};
+
+template<typename LEFT, typename RIGHT>
+struct Eq {};
+
+template<typename LST, typename ARG, typename LEFT, typename RIGHT>
+struct Evaluate<Eq<LEFT, RIGHT>, LST, ARG> {
+	typedef typename EqHelper<LEFT, RIGHT, LST, ARG>::result result;
+};
+
+//IF - Zakomentowane, bo się nie kompiluje
 
 // template<typename _TRUE, typename _FALSE>
-// struct IfHelper<Lit<True>>
+// struct IfHelper<true>
 // {
 // 	typedef _TRUE::result result;
 // };
 
 // template<typename _TRUE, typename _FALSE>
-// struct IfHelper<Lit<False>>
+// struct IfHelper<false>
 // {
 // 	typedef _FALSE::result result;
 // };
 
-template<typename _BOOL, typename _TRUE, typename _FALSE>
-struct If { //TRZEBA OGARNĄĆ PRZYPADEK GDY BOOL JEST NIE BOOLEM
-  typedef IfHelper<_BOOL::result><_TRUE, _FALSE>::result result; 
-};
+// // ROZWIĄZENIE ALTERNATYWNE – WYMAGA PRZEPISANIA POZOSTAŁEJ CZĘŚCI
+
+// // template<typename _TRUE, typename _FALSE>
+// // struct IfHelper<Lit<True>>
+// // {
+// // 	typedef _TRUE::result result;
+// // };
+
+// // template<typename _TRUE, typename _FALSE>
+// // struct IfHelper<Lit<False>>
+// // {
+// // 	typedef _FALSE::result result;
+// // };
+
+// template<typename _BOOL, typename _TRUE, typename _FALSE>
+// struct If { //TRZEBA OGARNĄĆ PRZYPADEK GDY BOOL JEST NIE BOOLEM
+//   typedef IfHelper<_BOOL::result><_TRUE, _FALSE>::result result; 
+// };
+
 
 //VAR
 
