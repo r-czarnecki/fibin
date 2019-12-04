@@ -51,49 +51,49 @@ struct False {
 
 struct LNULL {
 	typedef LNULL Head;
-	typedef LNULL Var;
 	typedef LNULL Tail;
+	static const unsigned long long Var;
 };
 
-template<typename H, typename V, typename T = LNULL>
+template<typename H, unsigned long long V, typename T = LNULL>
 struct List {
 	typedef H Head;
-	typedef V Var;
 	typedef T Tail;
+	static const unsigned long long Var = V;
 };
 
-template<typename H, typename V, typename LST>
+template<typename H, unsigned long long V, typename LST>
 struct PushFront {
 	typedef List<H, V, LST> result;
 };
 
-template <typename A, typename B>
-struct Equals {
-	static const bool result = false;
-};
+// template <typename A, typename B>
+// struct Equals {
+// 	static const bool result = false;
+// };
 
-template<typename A>
-struct Equals<A, A> {
-	static const bool result = true;
-};
+// template<typename A>
+// struct Equals<A, A> {
+// 	static const bool result = true;
+// };
 
-template<typename V, typename LST, bool FOUND = false>
+template<unsigned long long V, typename LST, bool FOUND = false, bool INIT = true>
 struct Find {
-	typedef Find<V, LST, Equals<V, typename LST::Var>::result> result;
+	typedef typename Find<V, LST, (V == LST::Var), false>::result result;
 };
 
-template<typename V, typename LST>
-struct Find<V, LST, false> {
-	typedef Find<V, typename LST::Tail, Equals<V, typename LST::Tail::Var>::result> result;
+template<unsigned long long V, typename LST>
+struct Find<V, LST, false, false> {
+	typedef typename Find<V, typename LST::Tail, (V == LST::Tail::Var)>::result result;
 };
 
-template<typename V, typename LST>
-struct Find<V, LST, true> {
+template<unsigned long long V, typename LST>
+struct Find<V, LST, true, false> {
 	typedef typename LST::Head result;
 };
 
-template<typename V, bool FOUND>
-struct Find<V, LNULL, FOUND> {
+template<unsigned long long V, bool FOUND, bool INIT>
+struct Find<V, LNULL, FOUND, INIT> {
 	typedef LNULL result;
 };
 
@@ -190,6 +190,22 @@ struct Eq {};
 template<typename LST, typename ARG, typename LEFT, typename RIGHT>
 struct Evaluate<Eq<LEFT, RIGHT>, LST, ARG> {
 	typedef typename EqHelper<LEFT, RIGHT, LST, ARG>::result result;
+};
+
+//REF
+
+template<unsigned long long VAR, typename LST>
+struct RefHelper {
+	typedef typename Find<VAR, LST>::result result;
+};
+
+template<unsigned long long VAR>
+struct Ref {};
+
+template<typename LST, typename ARG, unsigned long long VAR>
+struct Evaluate<Ref<VAR>, LST, ARG> {
+	typedef typename RefHelper<VAR, LST>::result result;
+	static_assert(!is_same<result, LNULL>::value, "");
 };
 
 //IF - Zakomentowane, bo się nie kompiluje
