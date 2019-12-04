@@ -6,6 +6,7 @@ using namespace std;
 
 int main() {
     const unsigned temp = Fib<3>::result;
-    cout << temp << endl;
-    
+
+    static_assert(Fibin<int>::eval<Lit<Fib<4>>>() == 3, "");
+    static_assert(Fibin<bool>::eval<Lit<True>>() == true, "");
 }
