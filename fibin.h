@@ -171,6 +171,20 @@ struct IfHelper<false>
 	typedef _FALSE::result result;
 };
 
+// ROZWIĄZENIE ALTERNATYWNE – WYMAGA PRZEPISANIA POZOSTAŁEJ CZĘŚCI
+
+// template<typename _TRUE, typename _FALSE>
+// struct IfHelper<Lit<True>>
+// {
+// 	typedef _TRUE::result result;
+// };
+
+// template<typename _TRUE, typename _FALSE>
+// struct IfHelper<Lit<False>>
+// {
+// 	typedef _FALSE::result result;
+// };
+
 template<typename _BOOL, typename _TRUE, typename _FALSE>
 struct If { //TRZEBA OGARNĄĆ PRZYPADEK GDY BOOL JEST NIE BOOLEM
   typedef IfHelper<_BOOL::result><_TRUE, _FALSE>::result result; 
