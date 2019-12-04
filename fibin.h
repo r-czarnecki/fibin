@@ -143,6 +143,34 @@ public:
 	typedef Add<LST, ARG, FIRST, SECOND, ARGS...> result;
 };
 
+//Inc1
+
+template<typename ARG>
+class Inc1 {
+public:
+	static const unsigned long long int value = Evaluate<Sum<ARG, Lit<Fib<1>>>, LNULL, ARGNULL>::result::value;
+};
+
+template<typename LST, typename ARG, typename INCARG>
+class Evaluate<Inc1<INCARG>, LST, ARG> {
+public:
+	typedef Inc1<INCARG> result;
+};
+
+//Inc10
+
+template<typename ARG>
+class Inc10 {
+public:
+	static const unsigned long long int value = Evaluate<Sum<ARG, Lit<Fib<10>>>, LNULL, ARGNULL>::result::value;
+};
+
+template<typename LST, typename ARG, typename INCARG>
+class Evaluate<Inc10<INCARG>, LST, ARG> {
+public:
+	typedef Inc10<INCARG> result;
+};
+
 //VAR
 
 constexpr unsigned long long Var(const char* str) {

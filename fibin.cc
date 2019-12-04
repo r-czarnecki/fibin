@@ -10,4 +10,6 @@ int main() {
     static_assert(Fibin<int>::eval<Lit<Fib<4>>>() == 3, "");
     static_assert(Fibin<bool>::eval<Lit<True>>() == true, "");
     static_assert(Fibin<int>::eval<Sum<Lit<Fib<1>>, Lit<Fib<5>>>>() == 6, "");
+    static_assert(Fibin<int>::eval<Inc1<Lit<Fib<5>>>>() == 6, "");
+    static_assert(Fibin<int>::eval<Inc10<Lit<Fib<10>>>>() == 110, "");
 }
