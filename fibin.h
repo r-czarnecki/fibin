@@ -157,6 +157,25 @@ struct Evaluate<Inc10<INCARG>, LST, ARG> {
 	typedef Inc10<INCARG> result;
 };
 
+//IF
+
+template<typename _TRUE, typename _FALSE>
+struct IfHelper<true>
+{
+	typedef _TRUE::result result;
+};
+
+template<typename _TRUE, typename _FALSE>
+struct IfHelper<false>
+{
+	typedef _FALSE::result result;
+};
+
+template<typename _BOOL, typename _TRUE, typename _FALSE>
+struct If { //TRZEBA OGARNĄĆ PRZYPADEK GDY BOOL JEST NIE BOOLEM
+  typedef IfHelper<_BOOL::result><_TRUE, _FALSE>::result result; 
+};
+
 //VAR
 
 constexpr unsigned long long Var(const char* str) {
