@@ -15,7 +15,7 @@ struct ARGNULL {};
 
 //LICZENIE LICZB FIBONACIEGO
 
-template<int N> //Może lepiej zamiast int użyć ValueType z  fibina? Wrzucić do środka i takie tam
+template<unsigned short N> 
 struct Fib    {
 	typedef bool lit;
 	static const int result = Fib<N-1>::result + Fib<N-2>::result;
