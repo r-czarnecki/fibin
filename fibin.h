@@ -18,21 +18,21 @@ struct ARGNULL {};
 template<unsigned short N> 
 struct Fib    {
 	typedef bool lit;
-	static const int result = Fib<N-1>::result + Fib<N-2>::result;
+	static const unsigned long long result = Fib<N-1>::result + Fib<N-2>::result;
 	static const bool isBoolean = false;
 };
 
 template<>
 struct Fib<1> {
 	typedef bool lit;
-	static const int result = 1;
+	static const unsigned long long result = 1;
 	static const bool isBoolean = false;
 };
 
 template<>
 struct Fib<0> {
 	typedef bool lit;
-	static const int result = 0;
+	static const unsigned long long result = 0;
 	static const bool isBoolean = false;
 };
 
