@@ -23,7 +23,7 @@ static_assert(59 == Fibin<uint64_t>::eval<Invoke<Lambda<Var("x"),
 static_assert(Fibin<int>::eval<Lit<Fib<1>>, char, 3>() == 1);
 
 static_assert(Fibin<int>::eval< If< Lit<True>, Lit<Fib<4>>, Lit<Fib<2>> > >() == 3, "Error in If true function");
-static_assert(Fibin<int>::eval< If< Lit<False>, Lit<Fib<4>>, Lit<Fib<2>> > >() == 1, "Error in If true function");
+static_assert(Fibin<int>::eval< If< Lit<False>, Lit<Fib<4>>, Lit<Fib<2>> > >() == 1, "Error in If false function");
 
 
 int main() {
