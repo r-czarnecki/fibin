@@ -17,7 +17,7 @@ struct ARGNULL {};
 
 template<unsigned short N> 
 struct Fib    {
-	typedef bool lit;
+	typedef bool lit; // Ensures that only structs with lit type defined can be template parameter of Lit
 	static const unsigned long long result = Fib<N-1>::result + Fib<N-2>::result;
 	static const bool isBoolean = false;
 };
