@@ -6,9 +6,8 @@
 #include <iostream>
 using namespace std;
 
-template<typename FIBIN, typename LST, typename ARG>
+template<typename FIBIN, typename LST, typename ARG, typename TYPE>
 struct Evaluate {
-	typedef bool eee;
 };
 
 struct ARGNULL {};
@@ -92,15 +91,15 @@ struct Find<V, LNULL, FOUND, INIT> {
 
 //LIT
 
-template <typename T, typename T::lit = 0>
+template <typename T, typename TYPE = unsigned long long, typename T::lit = 0>
 struct Lit {
-	static const unsigned long long value = T::result;
+	static const TYPE value = T::result;
 	static const bool isBoolean = T::isBoolean;
 };
 
-template<typename LST, typename ARG, typename T>
-struct Evaluate<Lit<T>, LST, ARG> {
-	typedef Lit<T> result;
+template<typename LST, typename ARG, typename T, typename TYPE, typename TYPE2>
+struct Evaluate<Lit<T, TYPE2>, LST, ARG, TYPE> {
+	typedef Lit<T, TYPE> result;
 };
 
 //SUM
@@ -109,69 +108,69 @@ template<typename FIRST, typename SECOND, typename... ARGS>
 struct Sum {
 };
 
-template<typename LST, typename ARG, typename FIRST, typename... ARGS>
+template<typename LST, typename ARG, typename TYPE, typename FIRST, typename... ARGS>
 struct Add {
-	static const unsigned long long int value = Add<LST, ARG, FIRST>::value + Add<LST, ARG, ARGS...>::value;
+	static const TYPE value = Add<LST, ARG, TYPE, FIRST>::value + Add<LST, ARG, TYPE, ARGS...>::value;
 	static const bool isBoolean = false;
 };
 
-template<typename LST, typename ARG, typename FIRST>
-struct Add<LST, ARG, FIRST> {
-	typedef typename Evaluate<FIRST, LST, ARG>::result EVAL;
+template<typename LST, typename ARG, typename TYPE, typename FIRST>
+struct Add<LST, ARG, TYPE, FIRST> {
+	typedef typename Evaluate<FIRST, LST, ARG, TYPE>::result EVAL;
 	static_assert(!EVAL::isBoolean, "");
-	static const unsigned long long int value = EVAL::value;
+	static const TYPE value = EVAL::value;
 };
 
-template<typename LST, typename ARG, typename FIRST, typename SECOND, typename... ARGS>
-struct Evaluate<Sum<FIRST, SECOND, ARGS...>, LST, ARG> {
-	typedef Add<LST, ARG, FIRST, SECOND, ARGS...> result;
+template<typename LST, typename ARG, typename TYPE, typename FIRST, typename SECOND, typename... ARGS>
+struct Evaluate<Sum<FIRST, SECOND, ARGS...>, LST, ARG, TYPE> {
+	typedef Add<LST, ARG, TYPE, FIRST, SECOND, ARGS...> result;
 };
 
-template<typename LST, typename ARG, typename FIRST, typename... ARGS, typename LST2, typename ARG2>
-struct Evaluate<Add<LST, ARG, FIRST, ARGS...>, LST2, ARG2> {
-	typedef Add<LST, ARG, FIRST, ARGS...> result;
+template<typename LST, typename ARG, typename TYPE, typename FIRST, typename... ARGS, typename LST2, typename ARG2>
+struct Evaluate<Add<LST, ARG, TYPE, FIRST, ARGS...>, LST2, ARG2, TYPE> {
+	typedef Add<LST, ARG, TYPE, FIRST, ARGS...> result;
 };
 
 //Inc1
 
-template<typename INCARG, typename LST, typename ARG>
+template<typename INCARG, typename LST, typename ARG, typename TYPE>
 struct Inc1Helper {
-	static const unsigned long long int value = Evaluate<Sum<INCARG, Lit<Fib<1>>>, LST, ARG>::result::value;
+	static const TYPE value = Evaluate<Sum<INCARG, Lit<Fib<1>>>, LST, ARG, TYPE>::result::value;
 	static const bool isBoolean = false;
 };
  
 template<typename ARG>
 struct Inc1 {};
 
-template<typename LST, typename ARG, typename INCARG>
-struct Evaluate<Inc1<INCARG>, LST, ARG> {
-	typedef Inc1Helper<INCARG, LST, ARG> result;
+template<typename LST, typename ARG, typename INCARG, typename TYPE>
+struct Evaluate<Inc1<INCARG>, LST, ARG, TYPE> {
+	typedef Inc1Helper<INCARG, LST, ARG, TYPE> result;
 };
 
-template<typename LST, typename ARG, typename INCARG>
-struct Evaluate<Inc1Helper<INCARG, LST, ARG>, LST, ARG> {
-	typedef Inc1Helper<INCARG, LST, ARG> result;
+template<typename LST, typename ARG, typename TYPE, typename INCARG>
+struct Evaluate<Inc1Helper<INCARG, LST, ARG, TYPE>, LST, ARG, TYPE> {
+	typedef Inc1Helper<INCARG, LST, ARG, TYPE> result;
 };
 
 //Inc10
 
-template<typename INCARG, typename LST, typename ARG>
+template<typename INCARG, typename LST, typename ARG, typename TYPE>
 struct Inc10Helper {
-	static const unsigned long long int value = Evaluate<Sum<INCARG, Lit<Fib<10>>>, LST, ARG>::result::value;
+	static const TYPE value = Evaluate<Sum<INCARG, Lit<Fib<10>>>, LST, ARG, TYPE>::result::value;
 	static const bool isBoolean = false;
 };
 
 template<typename ARG>
 struct Inc10 {};
 
-template<typename LST, typename ARG, typename INCARG>
-struct Evaluate<Inc10<INCARG>, LST, ARG> {
-	typedef Inc10Helper<INCARG, LST, ARG> result;
+template<typename LST, typename ARG, typename INCARG, typename TYPE>
+struct Evaluate<Inc10<INCARG>, LST, ARG, TYPE> {
+	typedef Inc10Helper<INCARG, LST, ARG, TYPE> result;
 };
 
-template<typename LST, typename ARG, typename INCARG>
-struct Evaluate<Inc10Helper<INCARG, LST, ARG>, LST, ARG> {
-	typedef Inc10Helper<INCARG, LST, ARG> result;
+template<typename LST, typename ARG, typename INCARG, typename TYPE>
+struct Evaluate<Inc10Helper<INCARG, LST, ARG, TYPE>, LST, ARG, TYPE> {
+	typedef Inc10Helper<INCARG, LST, ARG, TYPE> result;
 };
 
 //EQ
@@ -189,10 +188,10 @@ struct EqResult<VAL, VAL, TYPE, TYPE> {
 template<typename LEFT, typename RIGHT>
 struct Eq {};
 
-template<typename LST, typename ARG, typename LEFT, typename RIGHT>
-struct Evaluate<Eq<LEFT, RIGHT>, LST, ARG> {
-	typedef typename Evaluate<LEFT, LST, ARG>::result ELEFT;
-	typedef typename Evaluate<RIGHT, LST, ARG>::result ERIGHT;
+template<typename LST, typename ARG, typename TYPE, typename LEFT, typename RIGHT>
+struct Evaluate<Eq<LEFT, RIGHT>, LST, ARG, TYPE> {
+	typedef typename Evaluate<LEFT, LST, ARG, TYPE>::result ELEFT;
+	typedef typename Evaluate<RIGHT, LST, ARG, TYPE>::result ERIGHT;
 	typedef typename EqResult<ELEFT::value, ERIGHT::value, ELEFT::isBoolean, ERIGHT::isBoolean>::result result;
 };
 
@@ -201,10 +200,11 @@ struct Evaluate<Eq<LEFT, RIGHT>, LST, ARG> {
 template<unsigned long long VAR>
 struct Ref {};
 
-template<typename LST, typename ARG, unsigned long long VAR>
-struct Evaluate<Ref<VAR>, LST, ARG> {
-	typedef typename Find<VAR, LST>::result result;
-	static_assert(!is_same<result, LNULL>::value, "");
+template<typename LST, typename ARG, typename TYPE, unsigned long long VAR>
+struct Evaluate<Ref<VAR>, LST, ARG, TYPE> {
+	typedef typename Find<VAR, LST>::result FOUND;
+	static_assert(!is_same<FOUND, LNULL>::value, "");
+	typedef typename Evaluate<FOUND, LST, ARG, TYPE>::result result;
 };
 
 //LET
@@ -212,50 +212,61 @@ struct Evaluate<Ref<VAR>, LST, ARG> {
 template<unsigned long long VAR, typename VALUE, typename EXPRESSION>
 struct Let {};
 
-template<typename LST, typename ARG, unsigned long long VAR, typename VALUE, typename EXPRESSION>
-struct Evaluate<Let<VAR, VALUE, EXPRESSION>, LST, ARG> {
-	typedef typename Evaluate<VALUE, LST, ARGNULL>::result VAL;
+template<typename LST, typename ARG, typename TYPE, unsigned long long VAR, typename VALUE, typename EXPRESSION>
+struct Evaluate<Let<VAR, VALUE, EXPRESSION>, LST, ARG, TYPE> {
+	typedef typename Evaluate<VALUE, LST, ARGNULL, TYPE>::result VAL;
 	typedef typename PushFront<VAL, VAR, LST>::result NEWLST;
-	typedef typename Evaluate<EXPRESSION, NEWLST, ARG>::result result;
+	typedef typename Evaluate<EXPRESSION, NEWLST, ARG, TYPE>::result result;
 };
 
 //IF
 
-template<bool CONDITION, typename THEN, typename ELSE, typename LST, typename ARG>
+template<bool CONDITION, typename THEN, typename ELSE, typename LST, typename ARG, typename TYPE>
 struct IfHelper {
-	typedef typename Evaluate<THEN, LST, ARG>::result result;
+	typedef typename Evaluate<THEN, LST, ARG, TYPE>::result result;
 };
 
-template<typename THEN, typename ELSE, typename LST, typename ARG>
-struct IfHelper<false, THEN, ELSE, LST, ARG> {
-	typedef typename Evaluate<ELSE, LST, ARG>::result result;
+template<typename THEN, typename ELSE, typename LST, typename ARG, typename TYPE>
+struct IfHelper<false, THEN, ELSE, LST, ARG, TYPE> {
+	typedef typename Evaluate<ELSE, LST, ARG, TYPE>::result result;
 };
 
 template<typename CONDITION, typename THEN, typename ELSE>
 struct If {};
 
-template<typename LST, typename ARG, typename CONDITION, typename THEN, typename ELSE>
-struct Evaluate<If<CONDITION, THEN, ELSE>, LST, ARG> {
-	typedef typename Evaluate<CONDITION, LST, ARG>::result COND;
+template<typename LST, typename ARG, typename TYPE, typename CONDITION, typename THEN, typename ELSE>
+struct Evaluate<If<CONDITION, THEN, ELSE>, LST, ARG, TYPE> {
+	typedef typename Evaluate<CONDITION, LST, ARG, TYPE>::result COND;
 	static const bool cond = COND::value;
 	static_assert(COND::isBoolean, "");
-	typedef typename IfHelper<cond, THEN, ELSE, LST, ARG>::result result;
+	typedef typename IfHelper<cond, THEN, ELSE, LST, ARG, TYPE>::result result;
 };
 
 //LAMBDA
 
-template<unsigned long long VAR, typename BODY>
+template<unsigned long long VAR, typename BODY, typename LST = LNULL, bool hasLST = false>
 struct Lambda {};
 
-template<typename LST, unsigned long long VAR, typename BODY>
-struct Evaluate<Lambda<VAR, BODY>, LST, ARGNULL> {
-	typedef Lambda<VAR, BODY> result;
+template<typename LST, typename TYPE, unsigned long long VAR, typename BODY, typename LST2>
+struct Evaluate<Lambda<VAR, BODY, LST2, false>, LST, ARGNULL, TYPE> {
+	typedef Lambda<VAR, BODY, LST, true> result;
 };
 
-template<typename LST, typename ARG, unsigned long long VAR, typename BODY>
-struct Evaluate<Lambda<VAR, BODY>, LST, ARG> {
+template<typename LST, typename ARG, typename TYPE, unsigned long long VAR, typename BODY, typename LST2>
+struct Evaluate<Lambda<VAR, BODY, LST2, false>, LST, ARG, TYPE> {
 	typedef typename PushFront<ARG, VAR, LST>::result NEWLST;
-	typedef typename Evaluate<BODY, NEWLST, ARGNULL>::result result;
+	typedef typename Evaluate<BODY, NEWLST, ARGNULL, TYPE>::result result;
+};
+
+template<typename LST, typename TYPE, unsigned long long VAR, typename BODY, typename LST2>
+struct Evaluate<Lambda<VAR, BODY, LST2, true>, LST, ARGNULL, TYPE> {
+	typedef Lambda<VAR, BODY, LST2, true> result;
+};
+
+template<typename LST, typename ARG, typename TYPE, unsigned long long VAR, typename BODY, typename LST2>
+struct Evaluate<Lambda<VAR, BODY, LST2, true>, LST, ARG, TYPE> {
+	typedef typename PushFront<ARG, VAR, LST2>::result NEWLST;
+	typedef typename Evaluate<BODY, NEWLST, ARGNULL, TYPE>::result result;
 };
 
 //INVOKE
@@ -263,10 +274,11 @@ struct Evaluate<Lambda<VAR, BODY>, LST, ARG> {
 template<typename FUN, typename PARAM>
 struct Invoke {};
 
-template<typename LST, typename ARG, typename FUN, typename PARAM>
-struct Evaluate<Invoke<FUN, PARAM>, LST, ARG> {
-	typedef typename Evaluate<FUN, LST, PARAM>::result EVAL;
-	typedef typename Evaluate<EVAL, LST, ARG>::result result;
+template<typename LST, typename ARG, typename TYPE, typename FUN, typename PARAM>
+struct Evaluate<Invoke<FUN, PARAM>, LST, ARG, TYPE> {
+	typedef typename Evaluate<FUN, LST, ARG, TYPE>::result EFUN;
+	typedef typename Evaluate<PARAM, LST, ARG, TYPE>::result PAR;
+	typedef typename Evaluate<EFUN, LST, PAR, TYPE>::result result;
 };
 
 //VAR
@@ -302,7 +314,7 @@ template <typename ValueType>
 struct Fibin {
 	template<typename Expression, typename T = ValueType, typename enable_if<is_integral<T>::value, int>::type = 0>
 	constexpr static ValueType eval() {
-		return Evaluate<Expression, LNULL, ARGNULL>::result::value; 
+		return Evaluate<Expression, LNULL, ARGNULL, ValueType>::result::value; 
 	}
 
 	template<typename Expression, typename T = ValueType, typename enable_if<!is_integral<T>::value, int>::type = 0>
