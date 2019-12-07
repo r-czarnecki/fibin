@@ -319,7 +319,7 @@ struct Fibin {
 
 	template<typename Expression, typename T = ValueType, typename enable_if<!is_integral<T>::value, int>::type = 0>
 	constexpr static void eval() {
-		cout << "Fibin doesn't support that type\n";
+		cout << "Fibin doesn't support: " << typeid(ValueType).name() << "\n";
 	}
 };
 
