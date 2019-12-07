@@ -29,6 +29,19 @@ static_assert(Fibin<int>::eval<Lit<Fib<1>>, char, 3>() == 1);
 
 static_assert(Fibin<int>::eval< If< Lit<True>, Lit<Fib<4>>, Lit<Fib<2>> > >() == 3, "Error in If true function");
 static_assert(Fibin<int>::eval< If< Lit<False>, Lit<Fib<4>>, Lit<Fib<2>> > >() == 1, "Error in If false function");
+static_assert(
+FB::eval< 
+    If< 
+        Eq< 
+            Inc1< L<11> >, 
+            Sum< L<9>, L<9>, 
+                Sum < L<5>, L<5>, L<5>, L<5> >, 
+                L<3> >
+        >,
+        L<1>, 
+        L<33>
+    >
+>() == 1, "Equal as If argument");
 
 void test_fib() {
 
