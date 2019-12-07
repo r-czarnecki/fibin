@@ -6,6 +6,9 @@ template<unsigned n>
 using L = Lit<Fib<n>>;
 using FB = Fibin<int>;
 
+//Ściągawka fibonacciego
+// 0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610
+
 static_assert(Fibin<int>::eval<Lit<Fib<4>>>() == 3, "");
 static_assert(Fibin<bool>::eval<Lit<True>>() == true, "");
 static_assert(Fibin<int>::eval<Sum<Lit<Fib<1>>, Lit<Fib<5>>>>() == 6, "");
@@ -59,7 +62,6 @@ void test_fib() {
     static_assert(196418 == Fibin<int>::eval<L<27>>());
     static_assert(317811 == Fibin<int>::eval<L<28>>());
     static_assert(514229 == Fibin<int>::eval<L<29>>());
-
 
     static_assert(0 == Fibin<uint8_t>::eval<L<0>>());
     static_assert(1 == Fibin<uint8_t>::eval<L<1>>());
