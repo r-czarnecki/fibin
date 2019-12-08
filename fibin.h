@@ -49,7 +49,7 @@ struct False {
 	static const bool isBoolean = true;
 };
 
-//LISTA - JESZCZE NIE TESTOWANA
+//LISTA
 
 struct LNULL {
 	typedef LNULL Head;
@@ -290,7 +290,6 @@ constexpr unsigned long long Var(const char* str) {
 		c = str[i];
 		if(str[i] >= 'A' && str[i] <= 'Z')
 			c += 32;
-		// cout << c << endl;
 		
 		assert(((void)"Illegal character in Var(const char*)",
 			   (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')));
